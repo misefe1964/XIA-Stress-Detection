@@ -14,8 +14,36 @@ from sklearn.feature_selection import SelectFromModel
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, classification_report, confusion_matrix
+from sklearn.inspection import (partial_dependence, PartialDependenceDisplay)
 
+import random
 import ruptures as rpt
+
+def print_decision_rules(rf):
+
+    for tree_idx, est in enumerate(rf.estimators_):
+        tree = est.tree_
+        assert tree.value.shape[1] == 1 # no support for multi-output
+
+        print('TREE: {}'.format(tree_idx))
+
+        iterator = enumerate(zip(tree.children_left, tree.children_right, tree.feature, tree.threshold, tree.value))
+        for node_idx, data in iterator:
+            left, right, feature, th, value = data
+
+            # left: index of left child (if any)
+            # right: index of right child (if any)
+            # feature: index of the feature to check
+            # th: the threshold to compare against
+            # value: values associated with classes
+
+            # for classifier, value is 0 except the index of the class to return
+            class_idx = np.argmax(value[0])
+
+            if left == -1 and right == -1:
+                print('{} LEAF: return class={}'.format(node_idx, class_idx))
+            else:
+                print('{} NODE: if feature[{}] < {} then next={} else next={}'.format(node_idx, feature, th, left, right)) 
 
 def statistical_features(arr):
     vmin = np.amin(arr)
@@ -54,8 +82,14 @@ print('pre =', precision)
 print('recall =', recall) 
 print('f1 =', f1score)
 
-plt.barh(list(df_lag.columns.values[0:48]), clf.feature_importances_)
-plt.show()
+# feature imporance:
+# plt.barh(list(df_lag.columns.values[0:48]), clf.feature_importances_)
+# plt.show()
 
-# print(list(df_lag.columns.values[0:48]))
+# decision rules
+# print_decision_rules(clf)
 
+print(clf.classes_)
+
+# partial dependency plot
+PartialDependenceDisplay.from_estimator(clf, train, features=list(df_lag.columns.values[0:48]), target=00:48
