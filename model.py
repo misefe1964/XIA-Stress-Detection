@@ -92,4 +92,4 @@ print('f1 =', f1score)
 print(clf.classes_)
 
 # partial dependency plot
-PartialDependenceDisplay.from_estimator(clf, train, features=list(df_lag.columns.values[0:48]), target=00:48
+PartialDependenceDisplay.from_estimator(clf, train, features=list(df_lag.columns.values[0:48]), target=0)
