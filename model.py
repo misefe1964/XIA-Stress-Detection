@@ -13,7 +13,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_selection import SelectFromModel
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, classification_report, confusion_matrix
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, classification_report
 from sklearn.inspection import (partial_dependence, PartialDependenceDisplay)
 
 import random
@@ -43,7 +43,7 @@ def print_decision_rules(rf):
             if left == -1 and right == -1:
                 print('{} LEAF: return class={}'.format(node_idx, class_idx))
             else:
-                print('{} NODE: if feature[{}] < {} then next={} else next={}'.format(node_idx, feature, th, left, right)) 
+                print('{} NODE: if feature[{}] < {} then next={} else next={}'.format(node_idx, rf.feature_names_in_[feature], th, left, right))
 
 def statistical_features(arr):
     vmin = np.amin(arr)
@@ -83,13 +83,11 @@ print('recall =', recall)
 print('f1 =', f1score)
 
 # feature imporance:
-# plt.barh(list(df_lag.columns.values[0:48]), clf.feature_importances_)
-# plt.show()
+plt.barh(list(df_lag.columns.values[0:48]), clf.feature_importances_)
+plt.show()
 
 # decision rules
-# print_decision_rules(clf)
-
-print(clf.classes_)
+print_decision_rules(clf)
 
 # partial dependency plot
 PartialDependenceDisplay.from_estimator(clf, train, features=list(df_lag.columns.values[0:48]), target=0)
