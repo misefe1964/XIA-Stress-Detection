@@ -1,5 +1,6 @@
 import os
 from datetime import date, datetime, timedelta
+import shap
 
 import numpy as np
 import pandas as pd
@@ -83,11 +84,15 @@ print('recall =', recall)
 print('f1 =', f1score)
 
 # feature imporance:
-plt.barh(list(df_lag.columns.values[0:48]), clf.feature_importances_)
-plt.show()
+# plt.barh(list(df_lag.columns.values[0:48]), clf.feature_importances_)
+# plt.show()
 
 # decision rules
-print_decision_rules(clf)
+# print_decision_rules(clf)
 
 # partial dependency plot
-PartialDependenceDisplay.from_estimator(clf, train, features=list(df_lag.columns.values[0:48]), target=0)
+# PartialDependenceDisplay.from_estimator(clf, train, features=list(df_lag.columns.values[0:48]), target=0)
+
+explainer = shap.TreeExplainer(clf)
+shao_values = explainer.shap_values(test)
+shap.summary_plot(shap_values, test)
